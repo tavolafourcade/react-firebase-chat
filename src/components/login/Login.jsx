@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
 import { auth, db } from "../../lib/firebase";
@@ -58,9 +58,21 @@ const Login = () => {
 
   }
 
-  const handleLogin = e => {
+  const handleLogin = async(e) => {
     e.preventDefault();
-    toast.warn("Hello")
+    setLoading(true)
+
+    const formData = new FormData(e.target);
+    const {email, password} = Object.fromEntries(formData)
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+    } catch (error) {
+      console.log(error)
+      toast.error(error.message)
+    } finally {
+      setLoading(false)
+    }
+
   }
 
   return (
